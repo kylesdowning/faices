@@ -1,12 +1,35 @@
 from deepface import DeepFace
 import os
 import random
+# from fawkes.protection import Fawkes
 
 def main():
     # Remove invalid faces not recognized by the model.
-    remove_invalid_faces()
+    # remove_invalid_faces()
+    similarity_check()
 
-    
+
+def generate_synthetic_images():
+    pass
+
+# Verify all images return 100% similarities against themselves
+def similarity_check():
+    files = list(os.listdir('../images'))
+    iteration = 0
+    for f in files:
+        try:
+            print(f'===== Iteration {iteration} - File {f} =====')
+            path = f'../images/{f}'
+            result = DeepFace.verify(img1_path=path, img2_path=path)
+            if not result["distance"] == 0.0:
+                print(f'File {f} - Did not pass..')
+        except Exception as e:
+            print(f'Problem with DeepFace: {e.__str__()}')
+        iteration += 1
+    print('===== Finished =====')
+
+
+# Each entry is verified as having a compatible face.
 def remove_invalid_faces():
     # Create a list of all files first to avoid issues when deleting during iteration
     files = list(os.listdir('../images'))
