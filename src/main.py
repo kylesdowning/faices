@@ -28,6 +28,31 @@ def similarity_check():
         iteration += 1
     print('===== Finished =====')
 
+# return similarity between cloaked images and the original images
+def cloaked_similarity_check():
+    #files = list(os.listdir('../images'))
+    files = list(os.listdir('../images_cloaked'))
+    print(len(list(os.listdir('../images_cloaked'))))
+    iteration = 0
+
+    for f in files:
+        try:
+            print(f'===== Iteration {iteration} - File {f} =====')
+            path1 = f'../images/{f}'
+            print(path1)
+
+            path2 = f'../images_cloaked/{f}'
+            print(path2)
+
+
+            # result = DeepFace.verify(img1_path=path1, img2_path=path2)
+            # print(result["distance"])
+
+        except Exception as e:
+            print(f'Problem with DeepFace: {e.__str__()}')
+            iteration += 1
+    print('===== Finished =====')
+
 
 # Each entry is verified as having a compatible face.
 def remove_invalid_faces():
