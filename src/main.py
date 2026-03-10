@@ -29,6 +29,9 @@ def main():
     # TODO: Generate Synthetic Dataset
 
     print(f'\n-----Program terminated at: {swap_words(datetime.datetime.now().strftime("%x-%H:%M:%S"), "/", "_")}-----')
+    
+    #used to move the images from the first batch of 
+    #move_cloaked_images("../images-0", "../images-cloaked-low")
 
 def generate_synthetic_images():
     pass
@@ -105,15 +108,15 @@ def remove_invalid_faces() -> None:
 
 
 # For all images in the src directory, move them to the destination directory.
-def move_cloaked_images(src_path="../images", dest_path="../images-cloaked"):
+def move_cloaked_images(src_path, dest_path):
     print(f'========== Moving cloaked images from {src_path} --> {dest_path} ==========')
     with os.scandir(src_path) as source:
-        filenames = [f for f in source if f.name.endswith("cloaked.jpg")]
+        filenames = [f for f in source if f.name.endswith("cloaked.jpeg")]
     print(f'*  {len(filenames)} cloaked image(s) detected')
     print(filenames)
     for f in filenames:
-        new_filename = f.split('.')[0]
-        os.rename(f'{src_path}/{f}', f'{dest_path}/{new_filename}.jpg')
+        new_filename = f.name.split('_l')[0]
+        os.rename(f'{src_path}/{f.name}', f'{dest_path}/{new_filename}.jpg')
 
 
 if __name__ == "__main__":
