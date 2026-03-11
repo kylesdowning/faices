@@ -30,8 +30,9 @@ def main():
 
     print(f'\n-----Program terminated at: {swap_words(datetime.datetime.now().strftime("%x-%H:%M:%S"), "/", "_")}-----')
     
-    #used to move the images from the first batch of 
+    #used to move the images
     #move_cloaked_images("../images-0", "../images-cloaked-low")
+    #move_cloaked_images("../images-1", "../images-cloaked-low")
 
 def generate_synthetic_images():
     pass
@@ -55,8 +56,8 @@ def similarity_check() -> bool:
     return True
 
 # return similarity between cloaked images and the original images
-def cloaked_similarity_check(cloaked_dir="../images_cloaked") -> []:
-    files = list(os.listdir('../images_cloaked'))
+def cloaked_similarity_check(cloaked_dir="../images-cloaked-low") -> []:
+    files = list(os.listdir('../images-cloaked-low'))
     iteration = 0
     ret_list = []
     ret_list.append(["filename", "verified", "distance"])
@@ -65,7 +66,7 @@ def cloaked_similarity_check(cloaked_dir="../images_cloaked") -> []:
         try:
             print(f'===== Iteration {iteration} - File {f} =====')
             path1 = f'../images/{f}'
-            path2 = f'../images_cloaked/{f}'
+            path2 = f'../images-cloaked-low/{f}'
             result = DeepFace.verify(img1_path=path1, img2_path=path2)
             baseline = DeepFace.verify(img1_path=path1, img2_path=path1)
             print(f'===== Baseline: {baseline["distance"]}, Result: {result["distance"]} =====\n')
