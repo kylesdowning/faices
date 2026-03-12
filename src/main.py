@@ -2,6 +2,7 @@ from deepface import DeepFace
 import os
 import random
 import datetime
+import csv
 # from fawkes.protection import Fawkes
 
 def swap_words(s, x, y):
@@ -19,10 +20,13 @@ def main():
     print(f'-----Program invoked at: {DATE}-----\n')
 
     # Similarity Check
-    result = cloaked_similarity_check()
-    print('\n\nResult list:')
-    for r in result:
-        print(r)
+    #result = cloaked_similarity_check()
+    #print('\n\nResult list:')
+    #for r in result:
+        #print(r)
+
+    content = [["1", "2"], ["a", "b"], ["c", "d"]]
+    csv_writer(content)
 
     # TODO: Write Results to CSV File
 
@@ -56,8 +60,18 @@ def similarity_check() -> bool:
     return True
 
 # return similarity between cloaked images and the original images
-def cloaked_similarity_check(cloaked_dir="../images-cloaked-low") -> []:
-    files = list(os.listdir('../images-cloaked-low'))
+def cloaked_similarity_check(cloaked_dir="../images_cloaked") -> []:
+    """
+    Run similarity check between cloaked images and normal images
+    Cloaked image filepaths are assumed to be the same as default
+
+    Args:
+        cloaked_dir: Directory containing cloaked images
+        
+    Returns:
+        List of results
+    """
+    files = list(os.listdir('../images_cloaked'))
     iteration = 0
     ret_list = []
     ret_list.append(["filename", "verified", "distance"])
@@ -79,13 +93,26 @@ def cloaked_similarity_check(cloaked_dir="../images-cloaked-low") -> []:
     return ret_list
 
 
-# Each entry is verified as having a compatible face.
 def remove_invalid_faces() -> None:
-    # Create a list of all files first to avoid issues when deleting during iteration
+    """
+    Remove invalid faces from dataset
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    
+    # Generate list of all files, random ordering
     files = list(os.listdir('../images'))
     random.shuffle(files)
     print(f'Total files: {len(files)}')
+    
+    # Reference image for similarity check
     ref_img = "../images/100_0_0_20170112213500903.jpg"
+    
+    # Run similarity check through each image
     iteration = 0
     deleted_count = 0
     for f in files:
@@ -95,6 +122,8 @@ def remove_invalid_faces() -> None:
                 img1_path=ref_img,
                 img2_path=(f"../images/{f}")
             )
+            
+        # If image is not valid, then remove from dataset
         except Exception as e:
             print(f'path: {f} not valid (Error: {type(e).__name__})... Attempting to delete file.')
             try:
@@ -109,15 +138,54 @@ def remove_invalid_faces() -> None:
 
 
 # For all images in the src directory, move them to the destination directory.
-def move_cloaked_images(src_path, dest_path):
-    print(f'========== Moving cloaked images from {src_path} --> {dest_path} ==========')
+def move_cloaked_images(src_path="../images", dest_path="../images-cloaked"):
+    """
+    Move cloaked images from one directory to another
+
+    Args:
+        src_path: Source directory path
+        dest_path: Destination directory path
+
+    Returns:
+        None
+    """
+        print(f'========== Moving cloaked images from {src_path} --> {dest_path} ==========')
+    
+    # Generate list of filenames to move
     with os.scandir(src_path) as source:
         filenames = [f for f in source if f.name.endswith("cloaked.jpeg")]
     print(f'*  {len(filenames)} cloaked image(s) detected')
     print(filenames)
+    
+    # Move files
     for f in filenames:
         new_filename = f.name.split('_l')[0]
         os.rename(f'{src_path}/{f.name}', f'{dest_path}/{new_filename}.jpg')
+
+
+def csv_writer(content: [[]], filename_ext="default", relative_dirpath="../results/"):
+    """
+    Write experiment results to file at: relative_dirpath
+
+    Args:
+        content: Content to write to CSV file
+        filename_ext: Filename string to identify experiment type
+        relative_dirpath: Relative directory path to write file to.
+
+    Returns:
+        None
+    """
+    
+    # Create directory if not exists
+    os.makedirs(relative_dirpath, exist_ok=True)
+    filepath = f'{relative_dirpath}results_{filename_ext}_{DATE}.csv'
+    
+    # Write results to file
+    print(f'Writing results to: {filepath}')
+    with open(filepath, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(content)
+    print(f'Results successfully written to: {filepath}')
 
 
 if __name__ == "__main__":
