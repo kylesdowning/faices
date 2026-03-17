@@ -3,6 +3,9 @@ import os
 import random
 import datetime
 import csv
+import requests
+import json
+import urllib.request
 # from fawkes.protection import Fawkes
 
 def swap_words(s, x, y):
@@ -15,28 +18,30 @@ DATE=swap_words(datetime.datetime.now().strftime("%x-%H:%M:%S"), "/", "_")
 
 
 def main():
-    # Remove invalid faces not recognized by the model.
-    # remove_invalid_faces()
-    print(f'-----Program invoked at: {DATE}-----\n')
+    # # Remove invalid faces not recognized by the model.
+    # # remove_invalid_faces()
+    # print(f'-----Program invoked at: {DATE}-----\n')
 
-    # Similarity Check
-    #result = cloaked_similarity_check()
-    #print('\n\nResult list:')
-    #for r in result:
-        #print(r)
+    # # Similarity Check
+    # #result = cloaked_similarity_check()
+    # #print('\n\nResult list:')
+    # #for r in result:
+    #     #print(r)
 
-    content = [["1", "2"], ["a", "b"], ["c", "d"]]
-    csv_writer(content)
+    # content = [["1", "2"], ["a", "b"], ["c", "d"]]
+    # csv_writer(content)
 
-    # TODO: Write Results to CSV File
+    # # TODO: Write Results to CSV File
 
-    # TODO: Generate Synthetic Dataset
+    # # TODO: Generate Synthetic Dataset
 
-    print(f'\n-----Program terminated at: {swap_words(datetime.datetime.now().strftime("%x-%H:%M:%S"), "/", "_")}-----')
+    # print(f'\n-----Program terminated at: {swap_words(datetime.datetime.now().strftime("%x-%H:%M:%S"), "/", "_")}-----')
     
-    #used to move the images
-    #move_cloaked_images("../images-0", "../images-cloaked-low")
-    #move_cloaked_images("../images-1", "../images-cloaked-low")
+    # #used to move the images
+    # #move_cloaked_images("../images-0", "../images-cloaked-low")
+    # #move_cloaked_images("../images-1", "../images-cloaked-low")
+
+    generate_ai_images()
 
 def generate_synthetic_images():
     pass
@@ -149,7 +154,7 @@ def move_cloaked_images(src_path="../images", dest_path="../images-cloaked"):
     Returns:
         None
     """
-        print(f'========== Moving cloaked images from {src_path} --> {dest_path} ==========')
+    print(f'========== Moving cloaked images from {src_path} --> {dest_path} ==========')
     
     # Generate list of filenames to move
     with os.scandir(src_path) as source:
@@ -187,6 +192,50 @@ def csv_writer(content: [[]], filename_ext="default", relative_dirpath="../resul
         writer.writerows(content)
     print(f'Results successfully written to: {filepath}')
 
+
+def generate_ai_images(input_dir="../test"): 
+
+    images = list(os.listdir(input_dir))
+    #ai_images = list(os.listdir("../images-ai/"))
+    for f in images:
+        try:
+
+            path = f'../test/{f}'
+
+            split_data = path.split("../test/")[1].split("_")
+            
+            if(split_data[1] == "0"):
+                split_data[1] = "male"
+            
+            else:
+                split_data[1] = "female"
+
+            files = [("input_image", open(path, "rb"))]
+            payload = {
+                "text_prompt": "Marketer, " + split_data[1] + ", " + split_data[0] + " years old, professional headshot, solid background, portrait for linkedin",
+                "face_scale": 0.4,
+                "face_pos_x": 0.5,
+                "face_pos_y": 0.5,
+            }
+
+            response = requests.post(
+                "https://api.gooey.ai/v2/FaceInpainting/form/",
+                headers={
+                    "Authorization": "bearer " + os.environ["GOOEY_API_KEY"],
+                },
+                files=files,
+                data={"json": json.dumps(payload)},
+            )
+            assert response.ok, response.content
+
+            result = response.json()
+            output_images = result.get('output', {}).get('output_images', [])
+
+            urllib.request.urlretrieve(output_images[0], "../images-ai/" + path.split("../test/")[1])
+            
+        except Exception as e:
+            print("ERROR!")
+    
 
 if __name__ == "__main__":
     main()
