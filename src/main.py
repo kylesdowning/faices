@@ -41,8 +41,9 @@ def main():
     # #move_cloaked_images("../images-0", "../images-cloaked-low")
     # #move_cloaked_images("../images-1", "../images-cloaked-low")
 
-    #generate_ai_images()
-    missing_ai_images()
+    #generate_ai_images("../images-cloaked-med")
+    #generate_ai_images("../images-ai-failed")
+    #missing_ai_images()
 
 def generate_synthetic_images():
     pass
@@ -204,22 +205,25 @@ def missing_ai_images():
         if(os.path.exists(path) != True):
             print(path)
         
-        iteration += 1
+            iteration += 1
+
+            os.rename(f'{"../images-cloaked-med"}/{f}', f'{"../images-ai-failed"}/{f}')
+
     print(iteration)
             
             
 
 
-def generate_ai_images(input_dir="../images-cloaked-med"): 
+def generate_ai_images(input_dir): 
 
     images = list(os.listdir(input_dir))
 
     for f in images:
         try:
 
-            path = f'../images-cloaked-med/{f}'
+            path = f'{input_dir}/{f}'
 
-            split_data = path.split("../images-cloaked-med/")[1].split("_")
+            split_data = path.split(input_dir + "/")[1].split("_")
             
             if(split_data[1] == "0"):
                 split_data[1] = "male"
@@ -249,10 +253,10 @@ def generate_ai_images(input_dir="../images-cloaked-med"):
             result = response.json()
             output_images = result.get('output', {}).get('output_images', [])
 
-            urllib.request.urlretrieve(output_images[0], "../images-ai/" + path.split("../images-cloaked-med/")[1])
+            urllib.request.urlretrieve(output_images[0], "../images-ai/" + path.split(input_dir)[1])
             
         except Exception as e:
-            print("ERROR!")
+            print("ERROR!", e)
     
 
 if __name__ == "__main__":
