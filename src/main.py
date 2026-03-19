@@ -87,7 +87,7 @@ def cloaked_similarity_check(cloaked_dir="../images_cloaked") -> []:
     print(f'Processing cloaked images in {cloaked_dir}\n')
     for f in files:
         try:
-            print(f'===== Iteration {iteration} - File {f} =====')
+            print(f'===== Iteration [{iteration}/{len(files)}] - File {f} =====')
             path1 = f'../images/{f}'
             path2 = f'../images-cloaked-low/{f}'
             result = DeepFace.verify(img1_path=path1, img2_path=path2)
