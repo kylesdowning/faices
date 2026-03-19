@@ -117,10 +117,10 @@ def face_check(source_dir="../images", cloaked_dir="../images-cloaked-med", ai_d
         try:
             print(f'===== Iteration {iteration} - File {f} =====')
             og_path = f'../images/{f}.jpg'
-            cloaked_path = f'../images-cloaked-low/{f}.jpg'
+            cloaked_path = f'{cloaked_dir}/{f}.jpg'
             ai_path = f'../images-ai/{f}.jpg'
-            result = DeepFace.verify(img1_path=og_path, img2_path=cloaked_path)
-            baseline = DeepFace.verify(img1_path=og_path, img2_path=ai_path)
+            baseline = DeepFace.verify(img1_path=og_path, img2_path=cloaked_path)
+            result = DeepFace.verify(img1_path=og_path, img2_path=ai_path)
             print(f'===== CLOAKED: {baseline["distance"]}, AI: {result["distance"]} =====\n')
             iteration_result = [f, baseline["distance"], result["distance"]]
             ret_list.append(iteration_result)
