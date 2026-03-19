@@ -41,7 +41,8 @@ def main():
     # #move_cloaked_images("../images-0", "../images-cloaked-low")
     # #move_cloaked_images("../images-1", "../images-cloaked-low")
 
-    generate_ai_images()
+    #generate_ai_images()
+    missing_ai_images()
 
 def generate_synthetic_images():
     pass
@@ -192,17 +193,33 @@ def csv_writer(content: [[]], filename_ext="default", relative_dirpath="../resul
         writer.writerows(content)
     print(f'Results successfully written to: {filepath}')
 
+def missing_ai_images():
+    files = list(os.listdir('../images-cloaked-med'))
+    iteration = 0
+    
+    for f in files:
+            
+        path = f'../images-ai/{f}'
+        
+        if(os.path.exists(path) != True):
+            print(path)
+        
+        iteration += 1
+    print(iteration)
+            
+            
 
-def generate_ai_images(input_dir="../test"): 
+
+def generate_ai_images(input_dir="../images-cloaked-med"): 
 
     images = list(os.listdir(input_dir))
-    #ai_images = list(os.listdir("../images-ai/"))
+
     for f in images:
         try:
 
-            path = f'../test/{f}'
+            path = f'../images-cloaked-med/{f}'
 
-            split_data = path.split("../test/")[1].split("_")
+            split_data = path.split("../images-cloaked-med/")[1].split("_")
             
             if(split_data[1] == "0"):
                 split_data[1] = "male"
@@ -226,12 +243,13 @@ def generate_ai_images(input_dir="../test"):
                 files=files,
                 data={"json": json.dumps(payload)},
             )
+            
             assert response.ok, response.content
 
             result = response.json()
             output_images = result.get('output', {}).get('output_images', [])
 
-            urllib.request.urlretrieve(output_images[0], "../images-ai/" + path.split("../test/")[1])
+            urllib.request.urlretrieve(output_images[0], "../images-ai/" + path.split("../images-cloaked-med/")[1])
             
         except Exception as e:
             print("ERROR!")
