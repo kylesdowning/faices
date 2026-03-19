@@ -122,7 +122,7 @@ def face_check(source_dir="../images", cloaked_dir="../images-cloaked-med", ai_d
             result = DeepFace.verify(img1_path=og_path, img2_path=cloaked_path)
             baseline = DeepFace.verify(img1_path=og_path, img2_path=ai_path)
             print(f'===== CLOAKED: {baseline["distance"]}, AI: {result["distance"]} =====\n')
-            iteration_result = [f, result["verified"], result["distance"]]
+            iteration_result = [f, baseline["distance"], result["distance"]]
             ret_list.append(iteration_result)
         except Exception as e:
             print(f'Problem with DeepFace: {e.__str__()}')
