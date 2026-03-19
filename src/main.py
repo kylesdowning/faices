@@ -44,7 +44,8 @@ def main():
     #generate_ai_images("../images-cloaked-med")
     #generate_ai_images("../images-ai-failed")
     #missing_ai_images()
-    face_check()
+    ret = face_check()
+    csv_writer(data=ret, filename_ext="final")
 
 def generate_synthetic_images():
     pass
@@ -128,7 +129,6 @@ def face_check(source_dir="../images", cloaked_dir="../images-cloaked-med", ai_d
         iteration += 1
     print('===== Finished =====')
     return ret_list
-    pass
 
 
 def remove_invalid_faces() -> None:
