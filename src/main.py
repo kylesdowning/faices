@@ -109,6 +109,25 @@ def face_check(source_dir="../images", cloaked_dir="../images-cloaked-med", ai_d
     for i in range(len(base_filenames)):
         assert base_filenames[i] in cloaked_filenames and base_filenames[i] in ai_filenames
     print(base_filenames)
+    iteration = 0
+    ret_list = []
+    ret_list.append(["filename", "verified", "distance"])
+    for f in files:
+        try:
+            print(f'===== Iteration {iteration} - File {f} =====')
+            og_path = f'../images/{f}.jpg'
+            cloaked_path = f'../images-cloaked-low/{f}.jpg'
+            ai_path = f'../images-ai/{f}.jpg'
+            result = DeepFace.verify(img1_path=og_path, img2_path=cloaked_path)
+            baseline = DeepFace.verify(img1_path=og_path, img2_path=ai_path)
+            print(f'===== CLOAKED: {baseline["distance"]}, AI: {result["distance"]} =====\n')
+            iteration_result = [f, result["verified"], result["distance"]]
+            ret_list.append(iteration_result)
+        except Exception as e:
+            print(f'Problem with DeepFace: {e.__str__()}')
+        iteration += 1
+    print('===== Finished =====')
+    return ret_list
     pass
 
 
