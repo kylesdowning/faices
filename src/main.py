@@ -112,7 +112,7 @@ def face_check(source_dir="../images", cloaked_dir="../images-cloaked-med", ai_d
     iteration = 0
     ret_list = []
     ret_list.append(["filename", "verified", "distance"])
-    for f in files:
+    for f in base_filenames:
         try:
             print(f'===== Iteration {iteration} - File {f} =====')
             og_path = f'../images/{f}.jpg'
