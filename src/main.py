@@ -87,7 +87,7 @@ def cloaked_similarity_check(cloaked_dir="../images_cloaked") -> []:
     print(f'Processing cloaked images in {cloaked_dir}\n')
     for f in files:
         try:
-            print(f'===== Iteration [{iteration}/{len(files)}] - File {f} =====')
+            print(f'===== Iteration {iteration} - File {f} =====')
             path1 = f'../images/{f}'
             path2 = f'../images-cloaked-low/{f}'
             result = DeepFace.verify(img1_path=path1, img2_path=path2)
@@ -115,12 +115,12 @@ def face_check(source_dir="../images", cloaked_dir="../images-cloaked-med", ai_d
     ret_list.append(["filename", "verified", "distance"])
     for f in base_filenames:
         try:
-            print(f'===== Iteration {iteration} - File {f} =====')
+            print(f'===== Iteration [{iteration}/{len(base_filenames)}] - File {f} =====')
             og_path = f'../images/{f}.jpg'
             cloaked_path = f'{cloaked_dir}/{f}.jpg'
             ai_path = f'../images-ai/{f}.jpg'
-            baseline = DeepFace.verify(img1_path=og_path, img2_path=cloaked_path)
-            result = DeepFace.verify(img1_path=og_path, img2_path=ai_path)
+            result = DeepFace.verify(img1_path=og_path, img2_path=cloaked_path)
+            baseline = DeepFace.verify(img1_path=og_path, img2_path=ai_path)
             print(f'===== CLOAKED: {baseline["distance"]}, AI: {result["distance"]} =====\n')
             iteration_result = [f, baseline["distance"], result["distance"]]
             ret_list.append(iteration_result)
